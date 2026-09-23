@@ -70,7 +70,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-22 16:43:48.408885",
+ "modified": "2026-09-23 11:23:06.582468",
  "modified_by": "Administrator",
  "module": "Quickfix",
  "name": "Spare Part",
@@ -111,5 +111,6 @@
  "rows_threshold_for_grid_search": 20,
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "part_name"
 }

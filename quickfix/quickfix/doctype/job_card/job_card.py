@@ -3,11 +3,30 @@
 
 import frappe
 from frappe.model.document import Document
- 
-def autoname(self):
-	self.name = frappe.model.naming.make_autoname("JC-.YYYY.-.#####")
+from frappe.utils import flt
+
+class JobCard(Document):
+      
+ def autoname(self):
+   self.name = frappe.model.naming.make_autoname("JC-.YYYY.-.#####")
+   
+#  def get_permission_query_conditions(user):
+#     if not user:
+#         user = frappe.session.user
+#     if "QF Manager" in frappe.get_roles(user):
+#         return ""
+#     if "QF Technician" in frappe.get_roles(user):
+#         technician = frappe.db.get_value(
+#             "Technician",
+#             {"user": user},
+#             "name"
+#         )
+#         if technician:
+#           return f"`tabJob Card`.assigned_technician = {frappe.db.escape(technician)}"
+#         return "1=0"
+#     return "" 
      
-def validate(self):
+ def validate(self):
          phone = self.customer_phone
          if len(phone)!=10:
              frappe.throw("Phone Number Cant be less than 10 digits")
@@ -24,8 +43,8 @@ def validate(self):
          parts_total = 0
          
          for row in self.parts_used or []:
-            row.total_price = (row.quantiy or 0)*(row.unit_price or 0)
-            parts_total+=row.total_price
+            row.total_price = (row.quantity or 0)*(row.unit_price or 0)
+            parts_total+=flt(row.total_price)
          
          self.parts_total = parts_total
          
@@ -33,43 +52,43 @@ def validate(self):
              
              labour_charge = frappe.db.get_single_value(
 				 "QuickFix Settings",
-                  "default.labour_charge"
+                  "default_labour_charge"
 			 )
              self.labour_charge = labour_charge
          
-         self.final_amount = self.part_total + self.labour_charge     
-            
-def before_submit(self):
+         self.final_amount = self.parts_total + self.labour_charge     
+ #before-on           
+ def before_submit(self):
     
-    if self.status!="Ready for Delivery":
+    if self.status!="ReadyforDelivery":
         frappe.throw("This records cant be submitted until its status is Ready for Delivery.")         
     
     for row in self.parts_used or []:
         stock_qty = frappe.db.get_value(
             "Spare Part",
             row.part,
-            "quantity"
+            "stock_qty",
             ) or 0
-        if stock_qty < row.quantity:
+        if stock_qty <= row.quantity:
             part_name = frappe.db.get_value(
 				"Spare Part",
 				row.part,
-				"quantity"
+				"stock_qty",
 			) or row.part
             frappe.throw(f"Insufficient stock for {part_name} requiered {row.quanity} but available {stock_qty} ")            
-             
-def on_submit(self):
+#on-after             
+ def on_submit(self):
     
     for row in self.parts_used or []:
         current_qty = frappe.db.get_value(
             "Spare Part",
             row.part,
-            "quantity"
+            "stock_qty",
             ) or 0
         frappe.db.set_value(
 			"Spare Part",
 			 row.part,
-			"quantity"
+			"stock_qty",
             current_qty-row.quantity,
             update_modified= False 
 		)
@@ -82,26 +101,26 @@ def on_submit(self):
               "payment_status":self.payment_status
 	})
     
-    invoice.insert(ignore_permission=True)
+    invoice.insert(ignore_permissions=True)
     
-    frappe.enque(
+    frappe.enqueue(
 		"quicfix.quicfix.api.send_jobready_email",
          job_card_name = self.name,
          queue="short"
 	)
 
-def on_cancel(self):
+ def on_cancel(self):
     
         for row in self.parts_used or []:
             current_qty = frappe.db.get_value(
 				"Spare Part",
 				row.part,
-				"quantity"
+				"stock_qty",
 				) or 0
             frappe.db.set_value(
 					"Spare Part",
 					row.part,
-					"quantity"
+					"stock_qty",
 					current_qty+row.quantity,
 					update_modified= False 
 				)
@@ -113,7 +132,6 @@ def on_cancel(self):
 			 },
              "name"
 		)
-        
         if invoice_name :
             invoice = frappe.get_doc(
 				"Service Invoice",
@@ -122,26 +140,25 @@ def on_cancel(self):
             if invoice.docstatus==1:
                 invoice.cancel()
                 
-def on_trash(self):
-    
+ def on_trash(self):
     allowed_statuses = ["cancelled","Draft"]
-    
     if self.status not in allowed_statuses:
-        frappe.throw("The document cant be deleted untill its status is draft or cancelled")
-                    
-                  
-            
+        frappe.throw("The document cant be deleted untill its status is draft or cancelled") 
+ 
+#  def on_update(self):
+#      self.save()              
          
-@frappe.whitelist    
-def unsafe_jobcard():
+ @frappe.whitelist()    
+ def unsafe_jobcard():
         return frappe.get_all(
             "Job Card",
             fields=["*"]
             ); 
         
-@frappe.whitelist
-def safe_jobcard():
+ @frappe.whitelist()
+ def safe_jobcard():
     fields=[
+        "name",
         "customer_name",
         "customer_phone",
         "customer_email",
@@ -160,4 +177,10 @@ def safe_jobcard():
             job.pop("customer_phone",None)
             job.pop("customer_email",None)        
     
-    return jobs    
+    return jobs   
+ 
+def before_print(doc, method=None, print_settings=None):
+    doc.print_summary = (
+        f"{doc.customer_name} - "f"{doc.device_type}"
+    )
+    

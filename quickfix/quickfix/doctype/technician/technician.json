@@ -3,7 +3,7 @@
  "allow_bulk_edit": 1,
  "allow_rename": 1,
  "autoname": "TECH-.###",
- "creation": "2026-09-22 14:57:21.140206",
+ "creation": "2026-09-23 14:04:23.484580",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -34,14 +34,6 @@
    "set_only_once": 1
   },
   {
-   "fieldname": "status",
-   "fieldtype": "Select",
-   "in_filter": 1,
-   "in_list_view": 1,
-   "label": "Status",
-   "options": "Active\nOn Leave\nResigned"
-  },
-  {
    "fieldname": "phone",
    "fieldtype": "Data",
    "label": "Phone"
@@ -58,6 +50,14 @@
    "options": "Device Type"
   },
   {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_filter": 1,
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Active\nOn Leave\nResigned"
+  },
+  {
    "fieldname": "photo",
    "fieldtype": "Attach Image",
    "label": "Photo"
@@ -68,21 +68,22 @@
    "label": "Joining Date"
   },
   {
-   "fieldname": "notes",
-   "fieldtype": "Text",
-   "label": "Notes"
-  },
-  {
    "fieldname": "user",
    "fieldtype": "Link",
    "label": "User",
    "options": "User"
+  },
+  {
+   "depends_on": "eval:doc.status==\"On Leave\"",
+   "fieldname": "notes",
+   "fieldtype": "Text",
+   "label": "Notes"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-09-22 16:43:00.398279",
+ "modified": "2026-09-23 14:09:52.715546",
  "modified_by": "Administrator",
  "module": "Quickfix",
  "name": "Technician",
@@ -124,5 +125,6 @@
  "rows_threshold_for_grid_search": 20,
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "technician_name"
 }
