@@ -7,9 +7,9 @@
  "engine": "InnoDB",
  "field_order": [
   "section_break_czyl",
+  "amended_from",
   "customer_name",
   "customer_phone",
-  "amended_from",
   "customer_email",
   "device_type",
   "device_brand",
@@ -189,13 +189,23 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-23 18:40:50.634361",
+ "modified": "2026-09-24 19:14:20.701849",
  "modified_by": "Administrator",
  "module": "Quickfix",
  "name": "Job Card",
  "naming_rule": "By script",
  "owner": "Administrator",
  "permissions": [
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "QF Manager",
+   "submit": 1,
+   "write": 1
+  },
   {
    "create": 1,
    "print": 1,
@@ -206,16 +216,6 @@
   {
    "read": 1,
    "role": "QF Technician",
-   "submit": 1,
-   "write": 1
-  },
-  {
-   "amend": 1,
-   "cancel": 1,
-   "create": 1,
-   "delete": 1,
-   "read": 1,
-   "role": "QF Manager",
    "submit": 1,
    "write": 1
   }

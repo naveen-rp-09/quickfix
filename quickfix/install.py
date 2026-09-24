@@ -27,3 +27,4 @@ def create_default_settings():
             "low_stock_alert_enabled": 1
         })
         settings.insert(ignore_permissions=True)
+        

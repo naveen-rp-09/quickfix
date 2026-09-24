@@ -40,3 +40,22 @@ def send_jobready_email(job_card_name):
             QuickFix
         """
     )    
+
+@frappe.whitelist()
+def get_job_summary():
+    job_card_name = frappe.form_dict.get("job_card_name")
+
+    if not job_card_name or not frappe.db.exists("Job Card", job_card_name):
+        return {"error": "Not found"}
+
+    doc = frappe.get_doc("Job Card", job_card_name)
+
+    return {
+        "name": doc.name,
+        "customer_name": doc.customer_name,
+        "device_type": doc.device_type,
+        "status": doc.status,
+        "parts_total": doc.parts_total,
+        "labour_charge": doc.labour_charge,
+        "final_amount": doc.final_amount
+    }   

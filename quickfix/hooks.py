@@ -308,3 +308,9 @@ jinja = {
         "quickfix.jinja_methods"
     ]
 }
+
+scheduler_events={
+    "daily":[
+        "quickfix.scheduler.check_low_stock"  
+    ]
+}

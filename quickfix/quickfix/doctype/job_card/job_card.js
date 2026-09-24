@@ -21,6 +21,14 @@ frappe.ui.form.on('Job Card', {
 	refresh(frm) {
 
         frm.set_value("labour_charge",500)
+
+        if (!frappe.user.has_role("QF Manager")) {
+                 frm.set_df_property("customer_phone", "hidden", 1);
+        }
+        else {
+        frm.set_df_property("customer_phone", "hidden", 0);
+        }
+
 		
 		const status_colors={
 		     "Draft":"Grey",

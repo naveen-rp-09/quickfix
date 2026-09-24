@@ -92,16 +92,20 @@ class JobCard(Document):
             current_qty-row.quantity,
             update_modified= False 
 		)
-    invoice = frappe.get_doc({
-	         "doctype":"Service Invoice",
-              "job_card":self.name,
-              "labour_charge":self.labour_charge,
-              "parts_total":self.parts_total,
-              "total_amount":self.final_amount,
-              "payment_status":self.payment_status
-	})
+        
+        existing_invoice = frappe.db.exists("Service Invoice",{"job_card": self.name})
+        if not existing_invoice:
+        
+            invoice = frappe.get_doc({
+	            "doctype":"Service Invoice",
+                "job_card":self.name,
+                "labour_charge":self.labour_charge,
+                "parts_total":self.parts_total,
+                "total_amount":self.final_amount,
+                "payment_status":self.payment_status
+	        })
     
-    invoice.insert(ignore_permissions=True)
+            invoice.insert(ignore_permissions=True)
     
     frappe.enqueue(
 		"quicfix.quicfix.api.send_jobready_email",
