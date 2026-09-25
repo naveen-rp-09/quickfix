@@ -13,9 +13,7 @@ def create_default_device_types():
                 "doctype": "Device Type",
                 "device_type": device_type
             })
-            doc.insert(
-                ignore_permissions=True
-            )
+            doc.insert(ignore_permissions=True)
 
 def create_default_settings():
     if not frappe.db.exists("QuickFix Settings","QuickFix Settings"):

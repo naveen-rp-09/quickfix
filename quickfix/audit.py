@@ -1,6 +1,5 @@
 import frappe
 
-# @frappe.whitelist()
 def log_change(doc,method=None):
     if(doc.doctype == "Audit Log"):
        return;

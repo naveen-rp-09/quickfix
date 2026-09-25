@@ -286,10 +286,6 @@ fixtures = [
     }
 ]
 
-# permission_query_conditions = {
-#     "Job Card": "quickfix.quickfix.doctype.job_card.job_card.get_permission_query_conditions"
-# }
-
 after_install = "quickfix.install.after_install"
 
 doc_events = {
@@ -306,11 +302,5 @@ doc_events = {
 jinja = {
     "methods": [
         "quickfix.jinja_methods"
-    ]
-}
-
-scheduler_events={
-    "daily":[
-        "quickfix.scheduler.check_low_stock"  
     ]
 }

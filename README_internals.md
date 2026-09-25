@@ -1,5 +1,16 @@
-E3 — One Performance Judgment Call:
+B2c — Dangerous Patterns:
+def validate(self):
+    self.total = sum(r.amount for r in self.items)
+def on_submit(self):
+    other = frappe.get_doc("Spare Part", self.part)
+    other.stock_qty -= self.qty
+    other.save()
+-->as the above code is safer compared to the given because validate should only calculate the values or validate inside the validation and the get_doc should be written in the on_submit and save should be used there only  
 
+B2d — Concurrency, One Question:
+-->This error happens when two users edit the same document at the same time. One user saves it first, so the document changes. When the second user tries to save the old version, Frapp shows recorda already modified after opend.
+
+E3 — One Performance Judgment Call:
 threshold = frappe.db.get_value("QuickFix Settings", None, "low_stock_threshold")
 -->i would choose this because it retrieves only the required field value rather then retriving a complete doctype with all fields (this method of code reduces timestamp)
 

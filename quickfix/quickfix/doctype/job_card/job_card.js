@@ -21,32 +21,30 @@ frappe.ui.form.on('Job Card', {
 	refresh(frm) {
 
         frm.set_value("labour_charge",500)
-
         if (!frappe.user.has_role("QF Manager")) {
                  frm.set_df_property("customer_phone", "hidden", 1);
         }
         else {
-        frm.set_df_property("customer_phone", "hidden", 0);
+               frm.set_df_property("customer_phone", "hidden", 0);
         }
-
 		
 		const status_colors={
-		     "Draft":"Grey",
-             "Pending Diagnosis":"Orange",
-             "Awaiting Customer Approval":"Yellow",
-             "In Repair":"Blue",
-             "ReadyforDelivery":"Green",
-             "Delivered":"Green",
-             "Cancelled":"Red"   
+		     "Draft":"grey",
+             "Pending Diagnosis":"orange",
+             "Awaiting Customer Approval":"yellow",
+             "In Repair":"blue",
+             "ReadyforDelivery":"green",
+             "Delivered":"green",
+             "Cancelled":"red"   
 		};
 		 if (frm.doc.status) {
             frm.dashboard.add_indicator(
                 frm.doc.status,
-                status_colors[frm.doc.status] || "gray"
+                status_colors[frm.doc.status] || "grey"
             );
         }
 		
-		if (frm.doc.status === "Ready for Delivery" && frm.doc.docstatus === 1 ){    
+		if (frm.doc.status === "ReadyforDelivery" && frm.doc.docstatus === 1 ){    
 		frm.add_custom_button("Mark as Delivered",function(){
 		    frm.set_value(
 		        "status",
@@ -95,7 +93,7 @@ frappe.ui.form.on('Job Card', {
 
                 function(values) {
                     frappe.confirm(
-                        "Are you want to transfer the technician",
+                        "Are you want to transfer",
                         function() {
                             frappe.call({
                                 method: "quickfix.api.transfer_job",
@@ -222,38 +220,3 @@ frappe.ui.form.on('Part Usage Entry', {
         );
     }
 });
-
-// #old
-// function calculate_rowtotal(frm,cdt,cdn){
-//         let row = locals[cdt][cdn]
-//         total_price=0
-//         total=0
-//         (frm.doc.parts_used or []).forEach(row => {
-//              total_price=(row.quantity || 0)*(row.unit_price || 0)
-//              frappe.model.set_value(
-//                 cdt,
-//                 cdn,
-//                 "total_price",total_price
-//             )
-//             total+=total_price
-//         });
-        
-        
-//         frm.set_value("parts_total",total)
-//         parts_total(frm)    
-//     }
-
-// function parts_total(frm){
-//     final_amt = 0
-//     final_amt = frm.doc.parts_total + frm.doc.labour_charge
-//     frm.set_value("final_amount",final_amt)
-// }
-
-// frappe.ui.form.on('Part Usage Entry',{
-//     quantity(frm,cdt,cdn){
-//        calculate_rowtotal(frm,cdt,cdn)
-//     },
-//     unit_price(frm,cdt,cdn){
-//        calculate_rowtotal(frm,cdt,cdn)
-//     }
-// })

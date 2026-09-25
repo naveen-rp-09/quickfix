@@ -9,22 +9,6 @@ class JobCard(Document):
       
  def autoname(self):
    self.name = frappe.model.naming.make_autoname("JC-.YYYY.-.#####")
-   
-#  def get_permission_query_conditions(user):
-#     if not user:
-#         user = frappe.session.user
-#     if "QF Manager" in frappe.get_roles(user):
-#         return ""
-#     if "QF Technician" in frappe.get_roles(user):
-#         technician = frappe.db.get_value(
-#             "Technician",
-#             {"user": user},
-#             "name"
-#         )
-#         if technician:
-#           return f"`tabJob Card`.assigned_technician = {frappe.db.escape(technician)}"
-#         return "1=0"
-#     return "" 
      
  def validate(self):
          phone = self.customer_phone
@@ -107,11 +91,7 @@ class JobCard(Document):
     
             invoice.insert(ignore_permissions=True)
     
-    frappe.enqueue(
-		"quicfix.quicfix.api.send_jobready_email",
-         job_card_name = self.name,
-         queue="short"
-	)
+    frappe.enqueue("quickfix.api.send_email",job_card_name = self.name,queue="short")
 
  def on_cancel(self):
     
